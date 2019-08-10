@@ -1,0 +1,11 @@
+@import "../../variables";
+
+.terminals {
+    width: 1024px;
+    margin: 0.4rem;
+
+    & .terminal {
+        width: calc(102px - 0.8rem);
+        margin: 0.4rem;
+    }
+}

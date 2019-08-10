@@ -1,23 +1,15 @@
-.idea
-*.iml
-/logs
-/bin
-/.vscode
-!/.vscode/launch.json
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-*.yml
-!.travis.yml
-!config.example.yml
-
-/app/node_modules
-/app/.pnp
+# dependencies
+/node_modules
+/.pnp
 .pnp.js
 
 # testing
-/app/coverage
+/coverage
 
 # production
-/app/build
+/build
 
 # misc
 .DS_Store
