@@ -6,6 +6,7 @@ require (
 	github.com/codegangsta/cli v1.20.0
 	github.com/denisenkom/go-mssqldb v0.0.0-20190806190131-db2462fef53b // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/gin-gonic/gin v1.4.0 // indirect
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/golang/protobuf v1.3.2
 	github.com/google/go-cmp v0.3.1 // indirect

@@ -1,32 +1,48 @@
 @import "../../variables";
 
-button.terminal {
-    background: $button;
-    border: none;
-    border-radius: 6px;
-    
-    padding: 0.6rem;
+.terminal-wrapper {
+    position: absolute;
 
-    & .title {
-        margin-top: 6px;
-        font-size: 0.8rem;
+    height: $terminal-height;
+    width: $terminal-width;
+    padding: $terminal-margin;
+}
+
+@for $i from 0 through 9 {
+    .y-#{$i} {
+        top: $i * $terminal-height;
     }
+    .x-#{$i} {
+        left: $i * $terminal-width;
+    }
+}
 
-    & .icons { 
+.terminal {
+    color: white;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .title {
+        font-size: 1rem;
+        font-weight: bold;
+
         display: flex;
+        flex-direction: row;
         justify-content: center;
         align-items: center;
-
-        &> * {
-            padding: 0 4px;
-        }
     }
 
-    &:hover {
-        background: darken($button, 5);
+    .small {
+        font-size: .9rem;
     }
 
-    &:active {
-        background: darken($button, 20);
+    &.selected {
+        border: 4px solid white;
     }
 }

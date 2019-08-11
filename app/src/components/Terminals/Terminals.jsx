@@ -1,27 +1,33 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Terminal from '../Terminal';
+import Terminal from '../Terminal/Terminal';
 
 import './Terminals.scss';
 
 class Terminals extends React.Component {
 
+    constructor(props) {
+        super(props)
+    }
+
     render = () => {
-        return <div className="terminals">
-            <Terminal name="1" />
-            <Terminal name="2" />
-            <Terminal name="3" />
-            <Terminal name="4" />
-            <Terminal name="5" />
-            <Terminal name="6" />
-            <Terminal name="7" />
-            <Terminal name="8" />
-            <Terminal name="9" />
-            <Terminal name="10" />
+        return <div className="terminals-wrapper">
+            <div className="terminals">
+                {
+                    this.props.terminals.map((terminal) =>
+                        <Terminal key={terminal.name} {...terminal} />
+                    )
+                }
+            </div>
         </div>
     }
 
 }
 
-export default connect()(Terminals)
+const mapStateToProps = (state, ownProps) => ({
+    ...ownProps,
+    terminals: state.terminals,
+})
+
+export default connect(mapStateToProps)(Terminals)

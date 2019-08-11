@@ -54,7 +54,6 @@ func startInternalOutgoing() {
 			continue
 		}
 		conn.Write(msg)
-
 		log.Printf("sent command to %s", addr)
 	}
 }
