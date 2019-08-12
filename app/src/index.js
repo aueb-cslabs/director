@@ -44,7 +44,7 @@ const store = createStore(
           operating_system: 'darwin',
         },
       ],
-      y_u_debug_me_son: true,
+      terminalSearch: '',
     },
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 

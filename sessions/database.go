@@ -11,7 +11,7 @@ func findSession(session *types.Session) error {
 func findSessions(session *types.Session) ([]*types.Session, error) {
 	var sessions []*types.Session
 	err := ctx.DB().
-		Where("machine = ? OR username = ?", session.Machine, session.Username).
+		Where("terminal_id = ? OR username = ?", session.TerminalID, session.Username).
 		Find(&sessions).
 		Error
 	return sessions, err

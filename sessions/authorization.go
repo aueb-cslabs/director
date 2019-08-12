@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func Authorize(user *types.User, machine string) error {
+func Authorize(user *types.User, terminal *types.Terminal) error {
 	if ctx.Conf() == nil {
 		return nil
 	}
@@ -21,7 +21,7 @@ func Authorize(user *types.User, machine string) error {
 		}
 		err = ctx.Conf().User.AuthorizationRules.ExecuteRules(govaluate.MapParameters{
 			"user":       user,
-			"machine":    machine,
+			"terminal":   *terminal,
 			"concurrent": len(sessions),
 		})
 		if err != nil {
@@ -32,7 +32,7 @@ func Authorize(user *types.User, machine string) error {
 	if err := ctx.DB().Create(&types.Session{
 		InternalId: uuid.Must(uuid.NewV4()).String(),
 		Username:   user.Username,
-		Machine:    machine,
+		Terminal:   *terminal,
 		Expires:    time.Now().Add(time.Minute * 5),
 	}).Error; err != nil {
 		log.Printf("Error while creating session: %s", err)
@@ -43,11 +43,11 @@ func Authorize(user *types.User, machine string) error {
 	return nil
 }
 
-func Start(sessionId string, username string, machine string) error {
+func Start(sessionId string, username string, terminal *types.Terminal) error {
 	if ctx.Conf() == nil {
 		return nil
 	}
-	session := &types.Session{Machine: machine}
+	session := &types.Session{TerminalID: terminal.ID}
 	if err := findSession(session); err == nil && session.Username == username {
 		session.SessionId = sessionId
 		session.Status = types.SessionStarted
@@ -60,18 +60,18 @@ func Start(sessionId string, username string, machine string) error {
 			InternalId: uuid.Must(uuid.NewV4()).String(),
 			SessionId:  sessionId,
 			Username:   username,
-			Machine:    machine,
+			Terminal:   *terminal,
 			Expires:    time.Now().Add(time.Minute * 5),
 		}).Error; err != nil {
 			log.Printf("Error while creating session whilst starting: %s", err)
 			return err
 		}
 	}
-	log.Printf("Session for user %s on %s started.", username, machine)
+	log.Printf("Session for user %s on %s started.", username, terminal.Name)
 	return nil
 }
 
-func Update(sessionId string, username string, machine string) error {
+func Update(sessionId string, username string, terminal *types.Terminal) error {
 	if ctx.Conf() == nil {
 		return nil
 	}
@@ -87,7 +87,7 @@ func Update(sessionId string, username string, machine string) error {
 			InternalId: uuid.Must(uuid.NewV4()).String(),
 			SessionId:  sessionId,
 			Username:   username,
-			Machine:    machine,
+			Terminal:   *terminal,
 			Status:     types.SessionStarted,
 			Expires:    time.Now().Add(time.Minute * 3),
 		}).Error; err != nil {
@@ -95,11 +95,11 @@ func Update(sessionId string, username string, machine string) error {
 			return err
 		}
 	}
-	log.Printf("Session for user %s on %s updated.", username, machine)
+	log.Printf("Session for user %s on %s updated.", username, terminal.Name)
 	return nil
 }
 
-func End(sessionId string, username string, machine string) error {
+func End(sessionId string, username string, terminal *types.Terminal) error {
 	if ctx.Conf() == nil {
 		return nil
 	}
@@ -111,6 +111,6 @@ func End(sessionId string, username string, machine string) error {
 			return err
 		}
 	}
-	log.Printf("Session for user %s on %s ended.", username, machine)
+	log.Printf("Session for user %s on %s ended.", username, terminal.Name)
 	return nil
 }

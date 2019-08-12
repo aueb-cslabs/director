@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func Login(username, password, identifier string) error {
+func Login(username, password string, terminal *types.Terminal) error {
 
 	user := &types.User{Username: username}
 	var err error
@@ -43,7 +43,7 @@ func Login(username, password, identifier string) error {
 	}
 
 	//Try to auto-register user.
-	if err = autoRegister(user, identifier); err != nil {
+	if err = autoRegister(user, terminal); err != nil {
 		log.Printf("User %s was not authenticated: %s", user.Username, err)
 		return err
 	}
@@ -51,7 +51,7 @@ func Login(username, password, identifier string) error {
 UserFound:
 
 	//Try to authorize user.
-	if err := sessions.Authorize(user, identifier); err != nil {
+	if err := sessions.Authorize(user, terminal); err != nil {
 		log.Printf("User %s was not authorized: %s", user.Username, err)
 		return err
 	}

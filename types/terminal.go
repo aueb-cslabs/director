@@ -34,10 +34,13 @@ type Terminal struct {
 
 const statusKey = "directrd.terminal.%s.status"
 const ipKey = "directrd.terminal.%s.addr"
+const ipRevKey = "directrd.terminal.addresses.%s"
 
 func (t *Terminal) SaveRedis() {
 	ctx.Redis().Set(fmt.Sprintf(statusKey, t.Name), string(t.Status), time.Second*5).Result()
 	ctx.Redis().Set(fmt.Sprintf(ipKey, t.Name), string(t.Addr), time.Second*5).Result()
+
+	ctx.Redis().Set(fmt.Sprintf(ipRevKey, t.Addr), string(t.Name), time.Second*5).Result()
 }
 
 /* These are GORM hooks, see here:
@@ -58,4 +61,15 @@ func (t *Terminal) AfterFind() error {
 func (t *Terminal) BeforeSave() error {
 	t.SaveRedis()
 	return nil
+}
+
+func FindTerminalFromAddr(addr string) (*Terminal, error) {
+	terminal := &Terminal{}
+	return terminal, ctx.DB().
+		Where("name = ?", ctx.Redis().Get(fmt.Sprintf(ipRevKey, addr)).Val()).
+		Find(terminal).Error
+}
+
+func FindAddrFromTerminal(terminal string) (string, error) {
+	return ctx.Redis().Get(fmt.Sprintf(ipKey, terminal)).Result()
 }

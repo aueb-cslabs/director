@@ -12,13 +12,15 @@ class Terminals extends React.Component {
     }
 
     render = () => {
-        return <div className="terminals-wrapper">
-            <div className="terminals">
-                {
-                    this.props.terminals.map((terminal) =>
-                        <Terminal key={terminal.name} {...terminal} />
-                    )
-                }
+        return <div className="terminals-scroller">
+            <div className="terminals-wrapper">
+                <div className="terminals">
+                    {
+                        this.props.terminals.map((terminal) =>
+                            <Terminal key={terminal.name} {...terminal} />
+                        )
+                    }
+                </div>
             </div>
         </div>
     }

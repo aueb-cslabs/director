@@ -1,16 +1,19 @@
 @import "../../variables";
 
+.terminals-scroller {
+    background: lighten($dark, 3);
+    max-width: 100%;
+    overflow-x: scroll;
+}
+
 .terminals-wrapper {
     width: $terminal-width * 10 + $terminal-margin * 2;
     height: $terminal-height * 10 + $terminal-margin * 2;
     padding: $terminal-margin;
 
-    margin: 1rem auto;
+    margin: 0 auto;
     position: relative;
     box-sizing: border-box;
-    overflow-y: auto; 
-
-    border: 1px solid gray;
 }
 
 .terminals {

@@ -5,7 +5,7 @@ import (
 	"github.com/enderian/directrd/types"
 )
 
-func autoRegister(user *types.User, identifier string) (err error) {
+func autoRegister(user *types.User, terminal *types.Terminal) (err error) {
 	if !ctx.Conf().User.AutoRegister {
 		return types.ErrorNotRegistered
 	}
@@ -22,7 +22,7 @@ func autoRegister(user *types.User, identifier string) (err error) {
 	}
 	//Check ALL THE RULES.
 	return ctx.Conf().User.AutoRegisterRules.ExecuteRules(govaluate.MapParameters{
-		"user":    user,
-		"machine": identifier,
+		"user":     user,
+		"terminal": terminal,
 	})
 }

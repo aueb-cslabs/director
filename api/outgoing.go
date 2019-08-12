@@ -41,7 +41,7 @@ func startInternalOutgoing() {
 
 	for {
 		cmd := <-commandQueue
-		addr, err := terminals.GetAddr(cmd.GetTerminal())
+		addr, err := types.FindAddrFromTerminal(cmd.GetTerminal())
 		if err != nil {
 			log.Printf("error while sending command: %v", err)
 			continue

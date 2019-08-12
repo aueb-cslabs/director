@@ -2,6 +2,8 @@ package radius
 
 import (
 	"github.com/enderian/directrd/sessions"
+	"github.com/enderian/directrd/types"
+	"github.com/enderian/directrd/utils"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
 	"layeh.com/radius/rfc2866"
@@ -18,15 +20,16 @@ func startAccServer() {
 		username := rfc2865.UserName_GetString(r.Packet)
 		status := rfc2866.AcctStatusType_Get(r.Packet)
 		sessionId := rfc2866.AcctSessionID_GetString(r.Packet)
-		identifier := rfc2865.NASIdentifier_GetString(r.Packet)
+
+		terminal, _ := types.FindTerminalFromAddr(utils.ExtractAddr(r.RemoteAddr))
 
 		switch status {
 		case rfc2866.AcctStatusType_Value_Start:
-			_ = sessions.Start(sessionId, username, identifier)
+			_ = sessions.Start(sessionId, username, terminal)
 		case rfc2866.AcctStatusType_Value_Stop:
-			_ = sessions.End(sessionId, username, identifier)
+			_ = sessions.End(sessionId, username, terminal)
 		case rfc2866.AcctStatusType_Value_InterimUpdate:
-			_ = sessions.Update(sessionId, username, identifier)
+			_ = sessions.Update(sessionId, username, terminal)
 		}
 
 		packet := r.Packet

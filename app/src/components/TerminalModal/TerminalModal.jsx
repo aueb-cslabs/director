@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import './TerminalModal.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import actions from '../../libraries/actions';
+import './TerminalModal.scss';
 
 class TerminalModal extends React.Component {
 
@@ -15,35 +17,13 @@ class TerminalModal extends React.Component {
             return null;
         }
 
-        let actions = [
-            {
-                icon: 'sign-out-alt',
-                color: 'primary',
-                action: 'Sign Out',
-                command: 'signout',
-                valid: () => this.props.status == "LOGGED_IN",
-            },
-            {
-                icon: 'undo',
-                color: 'danger',
-                action: 'Restart',
-                command: 'restart',
-                valid: () => this.props.status != "OFFLINE",
-            },
-            {
-                icon: 'power-off',
-                color: 'danger',
-                action: 'Shutdown',
-                command: 'shutdown',
-                valid: () => this.props.status != "OFFLINE",
-            },
-        ];
-
-        let actualActions = actions.filter(act => act.valid()).map(act => 
-            <button className={`btn btn-${act.color}`}>
-                <FontAwesomeIcon icon={act.icon} />
-            </button>    
-        )
+        let actualActions = actions([this])
+            .filter(act => act.valid())
+            .map(act => 
+                <button className={`btn btn-${act.color}`}>
+                    <FontAwesomeIcon icon={act.icon} />
+                </button>    
+            )
 
         return <div className="modal show" style={{display: 'block'}}>
             <div className="modal-dialog" role="document">

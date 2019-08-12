@@ -18,7 +18,9 @@ type Session struct {
 	InternalId string `json:"internal_id" gorm:"primary_key"`
 	SessionId  string `json:"account_id"`
 
-	Machine  string `json:"machine"`
+	Terminal   Terminal `json:"-"`
+	TerminalID uint     `json:"terminal_id"`
+
 	Username string `json:"username"`
 	User     *User  `json:"user" sql:"-"`
 

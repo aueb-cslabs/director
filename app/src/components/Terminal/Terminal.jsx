@@ -24,7 +24,8 @@ class Terminal extends React.Component {
     }
 
     selected = () => {
-        return this.props.selected ? 'selected' : '';
+        return (this.props.selected ? 'selected ' : '') + 
+               (this.props.fade ? 'faded' : '');
     }
 
     icon = () => {
@@ -43,30 +44,6 @@ class Terminal extends React.Component {
             default: return '';
         }
     }
-
-    actions = () => [
-        {
-            icon: 'sign-out-alt',
-            color: 'primary',
-            action: 'Sign Out',
-            command: 'signout',
-            valid: () => this.props.status == "LOGGED_IN",
-        },
-        {
-            icon: 'undo',
-            color: 'danger',
-            action: 'Restart',
-            command: 'restart',
-            valid: () => this.props.status != "OFFLINE",
-        },
-        {
-            icon: 'power-off',
-            color: 'danger',
-            action: 'Shuwdown',
-            command: 'shutdown',
-            valid: () => this.props.status != "OFFLINE",
-        },
-    ];
 
     handleClick = (event) => {
         if (event.shiftKey)

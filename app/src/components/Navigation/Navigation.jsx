@@ -1,23 +1,27 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link, withRouter } from "react-router-dom";
+import { Route, Link, withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 
+import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Dropdown from 'react-bootstrap/Dropdown';
+
+import Terminals from './Terminals';
 
 import sections from '../../libraries/sections';
 import './Navigation.scss';
 
 class Navigation extends React.Component {
   render() {
+
     return [
       <Navbar bg="danger" expand="lg">
         <div className="container">
           <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
         </div>
       </Navbar>,
-      <Navbar bg="transparent" className="pt-4">
-        <div className="container">
+      <Navbar bg="transparent" className="py-3">
+        <Nav>
           <Dropdown>
             <Dropdown.Toggle variant="secondary" id="dropdown-basic">
               {
@@ -36,14 +40,12 @@ class Navigation extends React.Component {
               }
             </Dropdown.Menu>
           </Dropdown>
-        </div>
+        </Nav>
+        <Route exact path="/" component={Terminals}></Route>
       </Navbar>
     ];
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-});
 
 export default withRouter(connect()(Navigation));

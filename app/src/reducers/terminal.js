@@ -51,6 +51,16 @@ export default function terminal(state = {}, action) {
         terminalModal: undefined,
       }
     }
+    case 'SEARCH_TERMINAL': {
+      return {
+        ...state,
+        terminalSearch: action.query,
+        terminals: state.terminals.map((terminal) => ({
+          ...terminal,
+          fade: !terminal.name.includes(action.query)
+        })),
+      }
+    }
     default:
       return state;
   }
