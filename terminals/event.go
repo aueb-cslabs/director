@@ -40,6 +40,10 @@ func Event(event *types.Event, source net.Addr) {
 	case types.Event_Goodbye:
 		terminal.Addr = ""
 		terminal.Status = types.StatusOffline
+	case types.Event_SessionStart:
+		terminal.Status = types.StatusLoggedIn
+	case types.Event_SessionEnd:
+		terminal.Status = types.StatusOnline
 	}
 
 	terminal.SaveRedis()
