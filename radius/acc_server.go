@@ -1,13 +1,14 @@
 package radius
 
 import (
+	"log"
+
 	"github.com/enderian/directrd/sessions"
 	"github.com/enderian/directrd/types"
 	"github.com/enderian/directrd/utils"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
 	"layeh.com/radius/rfc2866"
-	"log"
 )
 
 func startAccServer() {
@@ -19,17 +20,23 @@ func startAccServer() {
 	handler := func(rw radius.ResponseWriter, r *radius.Request) {
 		username := rfc2865.UserName_GetString(r.Packet)
 		status := rfc2866.AcctStatusType_Get(r.Packet)
-		sessionId := rfc2866.AcctSessionID_GetString(r.Packet)
+		sessionID := rfc2866.AcctSessionID_GetString(r.Packet)
+		terminal, err := types.FindTerminalFromAddr(utils.ExtractHost(r.RemoteAddr))
 
-		terminal, _ := types.FindTerminalFromAddr(utils.ExtractAddr(r.RemoteAddr))
+		if err != nil {
+			packet := r.Packet.Response(radius.CodeAccessReject)
+			rw.Write(packet)
+			log.Printf("Terminal not recognized from RADIUS packet: %s", err.Error())
+			return
+		}
 
 		switch status {
 		case rfc2866.AcctStatusType_Value_Start:
-			_ = sessions.Start(sessionId, username, terminal)
+			_ = sessions.Start(sessionID, username, terminal)
 		case rfc2866.AcctStatusType_Value_Stop:
-			_ = sessions.End(sessionId, username, terminal)
+			_ = sessions.End(sessionID, username, terminal)
 		case rfc2866.AcctStatusType_Value_InterimUpdate:
-			_ = sessions.Update(sessionId, username, terminal)
+			_ = sessions.Update(sessionID, username, terminal)
 		}
 
 		packet := r.Packet

@@ -19,7 +19,14 @@ func startAuthServer() {
 	handler := func(rw radius.ResponseWriter, r *radius.Request) {
 		username := rfc2865.UserName_GetString(r.Packet)
 		password := rfc2865.UserPassword_GetString(r.Packet)
-		terminal, _ := types.FindTerminalFromAddr(utils.ExtractAddr(r.RemoteAddr))
+		terminal, err := types.FindTerminalFromAddr(utils.ExtractHost(r.RemoteAddr))
+
+		if err != nil {
+			packet := r.Packet.Response(radius.CodeAccessReject)
+			rw.Write(packet)
+			log.Printf("Terminal not recognized from RADIUS packet: %s", err.Error())
+			return
+		}
 
 		packet := r.Packet
 		if err := users.Login(username, password, terminal); err == nil {

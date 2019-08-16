@@ -6,6 +6,7 @@ import (
 
 var ctx types.Context
 
+// Setup the RADIUS part of the application
 func Setup(context types.Context) {
 	ctx = context
 	if ctx.Conf() == nil || ctx.Conf().Radius.SharedSecret == "" {

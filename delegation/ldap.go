@@ -4,10 +4,11 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/enderian/directrd/types"
 	"github.com/jinzhu/gorm/dialects/postgres"
 	"gopkg.in/ldap.v3"
-	"strings"
 )
 
 func initLdapConnection() (*ldap.Conn, error) {
@@ -32,6 +33,7 @@ func initLdapConnection() (*ldap.Conn, error) {
 	return l, l.Bind(ctx.Conf().LDAP.BindUsername, ctx.Conf().LDAP.BindPassword)
 }
 
+// AuthenticateLdap authenticates a user against the known LDAP server
 func AuthenticateLdap(user *types.User, password string) error {
 	l, err := initLdapConnection()
 	if err != nil {
@@ -66,6 +68,7 @@ func AuthenticateLdap(user *types.User, password string) error {
 	return FillLdap(user)
 }
 
+// FillLdap fills the user object with LDAP information
 func FillLdap(user *types.User) error {
 	l, err := initLdapConnection()
 	if err != nil {
