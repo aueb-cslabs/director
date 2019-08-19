@@ -109,6 +109,8 @@ func FillLdap(user *types.User) error {
 			}
 		case ctx.Conf().LDAP.AffiliationAttribute:
 			user.Affiliation = entry.Values[0]
+		case ctx.Conf().LDAP.MobileAttribute:
+			user.PhoneNumber = entry.Values[0]
 		default:
 			{
 				if ctx.Conf().LDAP.ExtraAttributes != nil {
