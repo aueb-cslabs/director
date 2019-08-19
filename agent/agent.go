@@ -2,10 +2,9 @@ package agent
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/enderian/directrd/types"
 	"github.com/kardianos/service"
+	"os"
 )
 
 var svcConfig = &service.Config{
