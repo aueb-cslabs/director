@@ -1,20 +1,31 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/enderian/directrd/types"
 	"github.com/labstack/echo"
+	"net/http"
 )
 
 func terminalsGroup(g *echo.Group) {
 	g.GET("/all", terminalsAll)
+	g.GET("/room/:id", getRoomStatus)
 	g.GET("/:terminal", getSingleTerminal)
 }
 
 func terminalsAll(c echo.Context) error {
 	var terminals []*types.Terminal
 	if err := ctx.DB().Find(&terminals).Error; err != nil {
+		panic(err)
+	}
+
+	return c.JSON(http.StatusOK, terminals)
+}
+
+func getRoomStatus(c echo.Context) error {
+	var terminals []*types.Terminal
+	room := c.Param("id")
+
+	if err := ctx.DB().Where("room_id = ?", room).Find(&terminals).Error; err != nil {
 		panic(err)
 	}
 
