@@ -20,7 +20,7 @@ type Terminal struct {
 
 	Name     string `json:"name" gorm:"primary_key"`
 	Hostname string `json:"hostname"`
-	Addr     string `json:"addr" sql:"-"`
+	Addr     string `json:"addr"`
 
 	RoomID uint `json:"room_id"`
 	Room   Room `json:"-"`

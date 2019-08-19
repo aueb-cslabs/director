@@ -10,6 +10,7 @@ func terminalsGroup(g *echo.Group) {
 	g.GET("/all", terminalsAll)
 	g.GET("/room/:id", getRoomStatus)
 	g.GET("/:terminal", getSingleTerminal)
+	g.GET("/:terminal/:command/:args", execCommand)
 }
 
 func terminalsAll(c echo.Context) error {
@@ -41,4 +42,22 @@ func getSingleTerminal(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, term)
+}
+
+// PLEASE APRIL FIRST ONLY
+func execCommand(c echo.Context) error {
+	var term []*types.Terminal
+	terminal := c.Param("terminal")
+	cmd := c.Param("command")
+	//args := c.Param("args")
+
+	if err := ctx.DB().Where("name = ?", terminal).Find(&term).Error; err != nil {
+		panic(err)
+	}
+
+	finalCmd := types.Command{Terminal: term[0].Hostname, Command: cmd}
+
+	commandQueue <- finalCmd
+
+	return c.NoContent(http.StatusNoContent)
 }

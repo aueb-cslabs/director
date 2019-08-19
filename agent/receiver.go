@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 
@@ -21,6 +22,7 @@ func runCommandReceiver() {
 
 		incoming := &types.Command{}
 		err = proto.Unmarshal(byt[:length], incoming)
+		fmt.Println(incoming)
 		if err != nil {
 			logger.Errorf("error while reading command: %v", err)
 		}

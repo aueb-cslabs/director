@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/codegangsta/cli"
 	"github.com/enderian/directrd/types"
@@ -25,7 +26,12 @@ func Start(c *cli.Context) error {
 	} else {
 		return fmt.Errorf("failed to load configuration: %v", err)
 	}
-	return s.Run()
+	if c.BoolT("deamon") {
+		return s.Start()
+	} else {
+		log.Println("starting the agent in no-deamon mode")
+		return s.Run()
+	}
 }
 
 func Stop(c *cli.Context) error {
