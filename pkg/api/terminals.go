@@ -10,16 +10,16 @@ import (
 )
 
 func terminalsGroup(g *echo.Group) {
-	g.GET("s", terminalsAll)
-	g.POST("/", registerTerminal)
+	g.GET("s", indexTerminals)
+	g.POST("", createTerminal)
 
-	term := g.Group("/:name", setTerminal)
-	term.GET("", getSingleTerminal)
-	term.DELETE("", deleteTerminal)
-	term.PUT("", updateTerminal)
-	term.POST("/execute", execCommand)
+	g.GET("/:name", showTerminal, setTerminal)
+	g.DELETE("/:name", deleteTerminal, setTerminal)
+	g.PUT("/:name", updateTerminal, setTerminal)
+	g.POST("/:name/execute", execCommand, setTerminal)
 }
-func terminalsAll(c echo.Context) error {
+
+func indexTerminals(c echo.Context) error {
 	var terminals []*types.Terminal
 	query := ctx.DB()
 
@@ -27,7 +27,6 @@ func terminalsAll(c echo.Context) error {
 		room, _ := strconv.Atoi(c.QueryParam("room"))
 		query = query.Where("room_id = ?", room)
 	}
-
 	if err := query.Find(&terminals).Error; err != nil {
 		panic(err)
 	}
@@ -35,7 +34,7 @@ func terminalsAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, terminals)
 }
 
-func registerTerminal(c echo.Context) error {
+func createTerminal(c echo.Context) error {
 	terminal := types.Terminal{}
 	_ = c.Bind(&terminal)
 
@@ -59,18 +58,8 @@ var setTerminal echo.MiddlewareFunc = func(next echo.HandlerFunc) echo.HandlerFu
 	}
 }
 
-func getSingleTerminal(c echo.Context) error {
+func showTerminal(c echo.Context) error {
 	return c.JSON(http.StatusOK, c.Get("terminal").(*types.Terminal))
-}
-
-func execCommand(c echo.Context) error {
-	cmd := types.Command{}
-	cmd.Terminal = c.Get("terminal").(*types.Terminal).Name
-	_ = c.Bind(&cmd)
-
-	commandQueue <- cmd
-
-	return c.NoContent(http.StatusNoContent)
 }
 
 func deleteTerminal(c echo.Context) error {
@@ -91,4 +80,14 @@ func updateTerminal(c echo.Context) error {
 		return err
 	}
 	return c.JSON(http.StatusOK, terminal)
+}
+
+func execCommand(c echo.Context) error {
+	cmd := types.Command{}
+	cmd.Terminal = c.Get("terminal").(*types.Terminal).Name
+	_ = c.Bind(&cmd)
+
+	commandQueue <- cmd
+
+	return c.NoContent(http.StatusNoContent)
 }
