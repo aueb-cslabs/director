@@ -21,7 +21,7 @@ func startApiServer() {
 	e.GET("/status", status)
 
 	api := e.Group("/api")
-	usersGroup(api.Group("/users"))
+	usersGroup(api.Group("/user"))
 	terminalsGroup(api.Group("/terminal"))
 
 	log.Printf("Starting API server on %s", ctx.Conf().API.RestAddr)
