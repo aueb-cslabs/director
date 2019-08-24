@@ -4,9 +4,9 @@ import (
 	"log"
 	"net"
 
-	"github.com/enderian/directrd/pkg/utils"
 	"github.com/enderian/directrd/pkg/terminals"
 	"github.com/enderian/directrd/pkg/types"
+	"github.com/enderian/directrd/pkg/utils"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -29,19 +29,21 @@ func startInternalOutgoing() {
 
 	for {
 		cmd := <-commandQueue
-		addr, err := types.FindAddrFromTerminal(cmd.GetTerminal())
+
+		terminal := &types.Terminal{}
+		err := ctx.DB().Where("terminal = ?", cmd.GetTerminal()).Find(terminal).Error
 		if err != nil {
 			log.Printf("error while sending command: %v", err)
 			continue
 		}
 
-		conn := outgoingUDP(addr)
+		conn := outgoingUDP(terminal.Addr)
 		msg, err := proto.Marshal(&cmd)
 		if err != nil {
 			log.Printf("error while sending command: %v", err)
 			continue
 		}
 		conn.Write(msg)
-		log.Printf("sent command to %s", addr)
+		log.Printf("sent command to %s", terminal.Addr)
 	}
 }

@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+const statusKey = "directrd.terminal.%s.status"
+
 type Status string
 
 const (
@@ -18,9 +20,9 @@ const (
 type Terminal struct {
 	model
 
-	Name     string `json:"name" gorm:"primary_key"`
+	Name     string `json:"name" gorm:"unique;not null"`
 	Hostname string `json:"hostname"`
-	Addr     string `json:"addr"`
+	Addr     string `json:"address"`
 
 	RoomID uint `json:"room_id"`
 	Room   Room `json:"-"`
@@ -32,15 +34,8 @@ type Terminal struct {
 	Status Status `json:"status" sql:"-"`
 }
 
-const statusKey = "directrd.terminal.%s.status"
-const ipKey = "directrd.terminal.%s.addr"
-const ipRevKey = "directrd.terminal.addresses.%s"
-
 func (t *Terminal) SaveRedis() {
 	ctx.Redis().Set(fmt.Sprintf(statusKey, t.Name), string(t.Status), time.Second*5).Result()
-	ctx.Redis().Set(fmt.Sprintf(ipKey, t.Name), string(t.Addr), time.Second*5).Result()
-
-	ctx.Redis().Set(fmt.Sprintf(ipRevKey, t.Addr), string(t.Name), time.Second*5).Result()
 }
 
 /* These are GORM hooks, see here:
@@ -52,24 +47,10 @@ func (t *Terminal) AfterFind() error {
 	} else {
 		t.Status = StatusOffline
 	}
-	if res, err := ctx.Redis().Get(fmt.Sprintf(ipKey, t.Name)).Result(); err == nil {
-		t.Addr = res
-	}
 	return nil
 }
 
 func (t *Terminal) BeforeSave() error {
 	t.SaveRedis()
 	return nil
-}
-
-func FindTerminalFromAddr(addr string) (*Terminal, error) {
-	terminal := &Terminal{}
-	return terminal, ctx.DB().
-		Where("name = ?", ctx.Redis().Get(fmt.Sprintf(ipRevKey, addr)).Val()).
-		Find(terminal).Error
-}
-
-func FindAddrFromTerminal(terminal string) (string, error) {
-	return ctx.Redis().Get(fmt.Sprintf(ipKey, terminal)).Result()
 }
