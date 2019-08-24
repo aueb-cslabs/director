@@ -2,7 +2,7 @@ package types
 
 import "time"
 
-type model struct {
+type Model struct {
 	ID        uint       `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"-"`
 	UpdatedAt time.Time  `json:"-"`

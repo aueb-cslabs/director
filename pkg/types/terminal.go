@@ -18,11 +18,11 @@ const (
 )
 
 type Terminal struct {
-	model
+	Model
 
 	Name     string `json:"name" gorm:"unique;not null"`
 	Hostname string `json:"hostname"`
-	Addr     string `json:"address"`
+	Addr     string `json:"addr"`
 
 	RoomID uint `json:"room_id"`
 	Room   Room `json:"-"`

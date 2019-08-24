@@ -10,7 +10,10 @@ func terminalsGroup(g *echo.Group) {
 	g.GET("/all", terminalsAll)
 	g.GET("/room/:id", getRoomStatus)
 	g.GET("/:terminal", getSingleTerminal)
-	g.GET("/:terminal/:command/:args", execCommand)
+	g.POST("/:terminal/execute", execCommand)
+	g.POST("/", registerTerminal)
+	g.DELETE("/:terminal", deleteTerminal)
+	g.PUT("/:terminal", updateTerminal)
 }
 
 func terminalsAll(c echo.Context) error {
@@ -44,20 +47,48 @@ func getSingleTerminal(c echo.Context) error {
 	return c.JSON(http.StatusOK, term)
 }
 
-// PLEASE APRIL FIRST ONLY
 func execCommand(c echo.Context) error {
-	var term []*types.Terminal
-	terminal := c.Param("terminal")
-	cmd := c.Param("command")
-	//args := c.Param("args")
+	cmd := types.Command{}
+	cmd.Terminal = c.Param("terminal")
+	_ = c.Bind(&cmd)
 
-	if err := ctx.DB().Where("name = ?", terminal).Find(&term).Error; err != nil {
-		panic(err)
+	commandQueue <- cmd
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+func registerTerminal(c echo.Context) error {
+	terminal := types.Terminal{}
+	_ = c.Bind(&terminal)
+
+	if err := ctx.DB().Save(&terminal).Error; err != nil {
+		return err
 	}
 
-	finalCmd := types.Command{Terminal: term[0].Hostname, Command: cmd}
+	return c.JSON(http.StatusOK, terminal)
+}
 
-	commandQueue <- finalCmd
+func deleteTerminal(c echo.Context) error {
+	name := c.Param("terminal")
+	terminal := &types.Terminal{Name: name}
+
+	if err := ctx.DB().Delete(&terminal).Error; err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+func updateTerminal(c echo.Context) error {
+	name := c.Param("terminal")
+	terminal := &types.Terminal{}
+	ctx.DB().Where("name = ?", name).Find(terminal)
+
+	_ = c.Bind(&terminal)
+
+	if err := ctx.DB().Save(&terminal).Error; err != nil {
+		return err
+	}
 
 	return c.NoContent(http.StatusNoContent)
 }

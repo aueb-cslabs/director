@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	model
+	Model
 
 	Username    string `json:"username" sql:",pk"`
 	FullName    string `json:"full_name"`

@@ -13,7 +13,7 @@ const (
 )
 
 type Session struct {
-	model
+	Model
 
 	InternalId string `json:"internal_id" gorm:"primary_key"`
 	SessionId  string `json:"account_id"`

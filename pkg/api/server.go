@@ -22,7 +22,7 @@ func startApiServer() {
 
 	api := e.Group("/api")
 	usersGroup(api.Group("/users"))
-	terminalsGroup(api.Group("/terminals"))
+	terminalsGroup(api.Group("/terminal"))
 
 	log.Printf("Starting API server on %s", ctx.Conf().API.RestAddr)
 	if err := e.Start(ctx.Conf().API.RestAddr); err != nil {

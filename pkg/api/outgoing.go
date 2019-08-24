@@ -31,7 +31,7 @@ func startInternalOutgoing() {
 		cmd := <-commandQueue
 
 		terminal := &types.Terminal{}
-		err := ctx.DB().Where("terminal = ?", cmd.GetTerminal()).Find(terminal).Error
+		err := ctx.DB().Where("name = ?", cmd.GetTerminal()).Find(terminal).Error
 		if err != nil {
 			log.Printf("error while sending command: %v", err)
 			continue

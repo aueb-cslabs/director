@@ -1,7 +1,7 @@
 package types
 
 type Room struct {
-	model
+	Model
 
 	Name string `json:"name"`
 }
