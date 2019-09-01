@@ -17,7 +17,7 @@ func startApiServer() {
 	e.HideBanner = true
 	e.HidePort = true
 
-	e.Use(middleware.Recover())
+	e.Use(middleware.CORS(), middleware.Recover())
 	e.GET("/status", status)
 
 	api := e.Group("/api")

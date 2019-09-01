@@ -1,7 +1,7 @@
+@import "./variables";
+
 @import "~bootstrap/scss/bootstrap";
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700&display=swap');
-
-@import "./variables";
 
 body {
     margin: 0;
@@ -11,6 +11,10 @@ body {
     font-family: 'Lato', sans-serif;
 }
 
+.navbar.bg-dark {
+    background-color: darken($dark, 5) !important;
+}
+
 .container {
-    max-width: $terminal-width * 10 + $terminal-margin * 2;
+    //max-width: $terminal-width * 10 + $terminal-margin * 2;
 }

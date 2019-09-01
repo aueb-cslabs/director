@@ -44,6 +44,7 @@ func AuthenticateLdap(user *types.User, password string) error {
 	// Search for the given username
 	filter := fmt.Sprintf("(&(objectClass=%s)(%s=%s))",
 		ctx.Conf().LDAP.SearchClass, ctx.Conf().LDAP.UsernameAttribute, user.Username)
+
 	searchRequest := ldap.NewSearchRequest(
 		ctx.Conf().LDAP.BaseDN, ldap.ScopeWholeSubtree, ldap.NeverDerefAliases,
 		0, 0, false, filter, []string{"dn"}, nil)
@@ -109,8 +110,10 @@ func FillLdap(user *types.User) error {
 			}
 		case ctx.Conf().LDAP.AffiliationAttribute:
 			user.Affiliation = entry.Values[0]
-		case ctx.Conf().LDAP.MobileAttribute:
+		case ctx.Conf().LDAP.PhoneNumberAttribute:
 			user.PhoneNumber = entry.Values[0]
+		case ctx.Conf().LDAP.EmailAddressAttribute:
+			user.EmailAddress = entry.Values[0]
 		default:
 			{
 				if ctx.Conf().LDAP.ExtraAttributes != nil {

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/enderian/directrd/pkg/types"
+	"github.com/enderian/directrd/pkg/utils"
 	"github.com/kardianos/service"
 )
 
@@ -36,10 +37,9 @@ func main() {
 		log.Fatalf("%s", err)
 	}
 
-	if conf, err := types.LoadConfiguration(*configFlag); err == nil {
-		config = conf
-	} else {
-		log.Fatalf("%s", err)
+	config = &types.Configuration{}
+	if err := utils.ParseFromFile(*configFlag, config); err != nil {
+		log.Fatalf("failed to load configuration: %v", err)
 	}
 
 	if len(os.Args) < 2 {

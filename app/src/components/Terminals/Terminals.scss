@@ -2,8 +2,10 @@
 
 .terminals-scroller {
     background: lighten($dark, 3);
-    max-width: 100%;
     overflow-x: scroll;
+    margin: 0 auto;
+    width: 100%;
+    max-width: $terminal-width * 10 + $terminal-margin * 2;
 }
 
 .terminals-wrapper {

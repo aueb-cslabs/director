@@ -1,11 +1,12 @@
 package users
 
 import (
+	"log"
+
 	"github.com/enderian/directrd/pkg/delegation"
 	"github.com/enderian/directrd/pkg/sessions"
 	"github.com/enderian/directrd/pkg/types"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 )
 
 func Login(username, password string, terminal *types.Terminal) error {
@@ -37,7 +38,7 @@ func Login(username, password string, terminal *types.Terminal) error {
 		return types.ErrorCredentials
 	}
 
-	if err = ctx.DB().Find(user).Error; err == nil {
+	if err = ctx.DB().Where("username = ?", username).Find(user).Error; err == nil {
 		//User has been found, do the necessary work.
 		goto UserFound
 	}

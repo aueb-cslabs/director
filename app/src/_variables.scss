@@ -1,6 +1,9 @@
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 
+$enable-rounded: false;
+
+$body-color: white;
 $button: #ccc;
 
 $terminal-width: 140px;

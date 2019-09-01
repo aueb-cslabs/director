@@ -57,10 +57,11 @@ type LdapConfiguration struct {
 
 	SearchClass string `yaml:"search_class"`
 
-	UsernameAttribute    string `yaml:"username_attribute"`
-	FullNameAttribute    string `yaml:"full_name_attribute"`
-	AffiliationAttribute string `yaml:"affiliation_attribute"`
-	MobileAttribute      string `yaml:"mobile_attribute"`
+	UsernameAttribute     string `yaml:"username_attribute"`
+	FullNameAttribute     string `yaml:"full_name_attribute"`
+	EmailAddressAttribute string `yaml:"email_address_attribute"`
+	PhoneNumberAttribute  string `yaml:"phone_number_attribute"`
+	AffiliationAttribute  string `yaml:"affiliation_attribute"`
 
 	ExtraAttributes map[string]string `yaml:"extra_attributes"`
 	FixFullNameCase bool              `yaml:"fix_full_name_case"`

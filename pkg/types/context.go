@@ -2,17 +2,24 @@ package types
 
 import (
 	"context"
-	"github.com/jinzhu/gorm"
-	"github.com/go-redis/redis"
 	"time"
+
+	"github.com/go-redis/redis"
+	"github.com/jinzhu/gorm"
 )
 
-const confContext = "conf"
-const databaseContext = "db"
-const redisContext = "redis"
+type contextType uint
+
+const (
+	confContext contextType = iota
+	databaseContext
+	redisContext
+	commandsContext
+	permissionsContext
+)
 
 type Context struct {
-	ctx context.Context //Actual enclosed context
+	ctx context.Context
 }
 
 func NewContextWithConfig(ctx context.Context, conf *Configuration) Context {
@@ -27,7 +34,15 @@ func NewContextWithRedis(ctx context.Context, red *redis.Client) Context {
 	return Context{context.WithValue(ctx, redisContext, red)}
 }
 
-func (c Context) Deadline() (deadline time.Time, ok bool) {
+func NewContextWithCommands(ctx context.Context, cmds *Commands) Context {
+	return Context{context.WithValue(ctx, commandsContext, cmds)}
+}
+
+func NewContextWithPermissions(ctx context.Context, perms *Permissions) Context {
+	return Context{context.WithValue(ctx, permissionsContext, perms)}
+}
+
+func (c Context) Deadline() (time.Time, bool) {
 	return c.ctx.Deadline()
 }
 
@@ -53,4 +68,12 @@ func (c Context) DB() *gorm.DB {
 
 func (c Context) Redis() *redis.Client {
 	return c.ctx.Value(redisContext).(*redis.Client)
+}
+
+func (c Context) Commands() *Commands {
+	return c.ctx.Value(commandsContext).(*Commands)
+}
+
+func (c Context) Permissions() *Permissions {
+	return c.ctx.Value(permissionsContext).(*Permissions)
 }

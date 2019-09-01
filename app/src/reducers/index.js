@@ -1,4 +1,13 @@
-import terminal from './terminal';
-import {combineReducers} from 'redux';
+import terminals from './terminals';
+import users from './users';
 
-export default terminal;
+import { reducer as formReducer } from 'redux-form'
+import { connectRouter } from 'connected-react-router'
+import { combineReducers } from 'redux';
+
+export default (history) => combineReducers({
+  terminals: terminals,
+  users: users,
+  form: formReducer,
+  router: connectRouter(history),
+});

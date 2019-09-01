@@ -1,56 +1,69 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import thunk from 'redux-thunk';
 
-import {createStore} from 'redux';
-import {Provider} from 'react-redux';
+import { createStore, compose, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import { Route, Switch } from 'react-router'
+import { ConnectedRouter, routerMiddleware } from 'connected-react-router'
+import { createBrowserHistory } from 'history'
 
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {fab} from '@fortawesome/free-brands-svg-icons';
-import {fas} from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+
+import createRootReducer from './reducers';
+
+import Navigation from './components/Navigation';
+
+import Terminals from './components/Terminals';
+import TerminalsEditor from './components/Terminals/Editor';
+
+import Users from './components/Users';
+import UsersEditor from './components/Users/Editor';
 
 import './index.scss';
 
-import reducers from './reducers';
-import App from './components/App/App';
+export const history = createBrowserHistory()
 
 library.add(fas, fab);
 
-const store = createStore(
-    reducers,
-    {
-      terminals: [
-        {
-          id: 1,
-          name: 'CSLAB2-11',
-          status: 'ONLINE',
-          pos_y: 0,
-          pos_x: 0,
-          operating_system: 'windows',
-        },
-        {
-          id: 2,
-          name: 'CSLAB2-12',
-          status: 'LOCKED',
-          pos_y: 1,
-          pos_x: 0,
-          operating_system: 'linux',
-        },
-        {
-          id: 3,
-          name: 'CSLAB2-13',
-          status: 'OFFLINE',
-          pos_y: 0,
-          pos_x: 1,
-          operating_system: 'darwin',
-        },
-      ],
-      terminalSearch: '',
+const initialState = {
+  terminals: {
+    all: [],
+    search: '',
+    modal: undefined,
+  },
+  users: {
+    authenticated: {
+      username: 'p3150133',
+      full_name: 'Spyridon Pagkalos',
+      type: 1,
     },
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+    searchTerm: '',
+    searchResults: []
+  }
+}
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+  createRootReducer(history),
+  initialState,
+  composeEnhancers(
+    applyMiddleware(thunk, routerMiddleware(history))
+  )
+);
 
 ReactDOM.render(
-    <Provider store={store}>
-      <App />
-    </Provider>,
-    document.getElementById('root')
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <Navigation />
+      <Route exact path="/" component={Terminals} />
+      <Route exact path="/terminals/:name" component={TerminalsEditor} />
+
+      <Route exact path="/users" component={Users} />
+      <Route exact path="/users/:username" component={UsersEditor} />
+    </ConnectedRouter>
+  </Provider>,
+  document.getElementById('root')
 );

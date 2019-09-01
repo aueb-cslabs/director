@@ -21,7 +21,7 @@ func startAuthServer() {
 		password := rfc2865.UserPassword_GetString(r.Packet)
 
 		terminal := &types.Terminal{}
-		err := ctx.DB().Where("terminal = ?", utils.ExtractHost(r.RemoteAddr)).
+		err := ctx.DB().Where("addr = ?", utils.ExtractHost(r.RemoteAddr)).
 			Find(terminal).Error
 		if err != nil {
 			packet := r.Packet.Response(radius.CodeAccessReject)

@@ -1,10 +1,11 @@
 package database
 
 import (
+	"log"
+
+	"github.com/enderian/directrd/pkg/types"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/enderian/directrd/pkg/types"
-	"log"
 )
 
 func SetupDatabase(ctx types.Context) types.Context {
