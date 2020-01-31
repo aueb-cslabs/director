@@ -1,0 +1,10 @@
+{
+  "python.pythonPath": "venv/bin/python3.7",
+  "python.linting.pylintPath": "venv/bin/pylint",
+  "python.linting.pylintArgs": [
+    "--extension-pkg-whitelist",
+    "ldap,flask",
+    "--load-plugins",
+    "pylint_flask"
+  ]
+}
