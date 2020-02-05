@@ -12,16 +12,39 @@ class Authenticator():
                 from .ldap_adapter import LdapAdapter
                 self.adapters.append(LdapAdapter())
 
-    def authenticate(self, username, password):
+    def get_user(self, username):
+        """
+        Get a user from any of the available backends.
+        """
+        for adapter in self.adapters:
+            user = adapter.get_user(username)
+            if user is not None:
+                return user
+        return None
+
+    def authenticate_user(self, user, password):
         """
         Authenticate by using all available backends.
         """
 
         from flask import current_app
         for adapter in self.adapters:
-            if adapter.authenticate(username, password):
+            if adapter.authenticate(user, password):
                 current_app.logger.debug('%s authenticated with %s.',
-                                         username,
+                                         user.username,
                                          adapter.__class__.__name__)
-                return True
-        return False
+                for post_adapter in self.adapters:
+                    post_adapter.post_authenticate(user, password)
+                return user
+        return None
+
+    def authenticate(self, username, password):
+        """
+        Authenticate only by using a username and a password.
+        User discovery and authentication is handled on its own.
+        """
+        user = self.get_user(username)
+        if user is None:
+            return None
+
+        return self.authenticate_user(user, password)

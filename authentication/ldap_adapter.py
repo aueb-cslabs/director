@@ -1,5 +1,6 @@
 from flask import current_app as app
 from ldap import initialize, SCOPE_SUBTREE, INVALID_CREDENTIALS
+from model import User, UserType
 
 from .adapter import Adapter
 
@@ -21,15 +22,26 @@ class LdapAdapter(Adapter):
         self.search_string = '(&(objectClass={})(|(uid={})(cn={})(sn={})(givenName={})))'
 
     def __with_connection(self, callback):
-        """
-        Evaluates the eval lambda using a new LDAP connection.
-        """
         conn = initialize(self.url, bytes_mode=False)
         if self.bind_dn is not None:
             conn.simple_bind_s(self.bind_dn, self.bind_pw)
 
         ret = callback(conn)
         return ret
+
+    @staticmethod
+    def __to_user(result):
+        attrs = result[1]
+        for name, value in attrs.items():
+            attrs[name] = value[0].decode("utf-8")
+
+        return User(user_type=UserType.ldap,
+                    foreign_id=result[0],
+                    username=attrs['uid'],
+                    full_name=attrs.get('cn', attrs['uid']),
+                    mail=attrs.get('mail', None),
+                    phone=attrs.get('mobile', None),
+                    affiliation=attrs.get('eduPersonAffiliation', None))
 
     def get_user(self, username):
         """
@@ -43,14 +55,14 @@ class LdapAdapter(Adapter):
                                               self.username_attr,
                                               username)
         ))
-        return res[0] if len(res) > 0 else None
+        return LdapAdapter.__to_user(res[0]) if len(res) > 0 else None
 
     def search_user(self, query):
         """
         Searches for a user inside the LDAP directory, based on the
         configuration of the app.
         """
-        return self.__with_connection(lambda conn: conn.search_s(
+        return list(map(LdapAdapter.__to_user, self.__with_connection(lambda conn: conn.search_s(
             self.base_dn,
             SCOPE_SUBTREE,
             filterstr=self.search_string.format(self.object_class_attr,
@@ -58,14 +70,13 @@ class LdapAdapter(Adapter):
                                                 query,
                                                 query,
                                                 query)
-        ))
+        ))))
 
-    def authenticate(self, username, password):
-        user = self.get_user(username)
-        if user is not None:
+    def authenticate(self, user, password):
+        if user is not None and user.user_type == UserType.ldap:
             conn = initialize(self.url)
             try:
-                conn.simple_bind_s(user[0], password)
+                conn.simple_bind_s(user.foreign_id, password)
                 return True
             except INVALID_CREDENTIALS:
                 pass

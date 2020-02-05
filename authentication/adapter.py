@@ -9,5 +9,8 @@ class Adapter():
     def search_user(self, query):
         pass
 
-    def authenticate(self, username, password):
+    def authenticate(self, user, password):
+        pass
+
+    def post_authenticate(self, user, password):
         pass
