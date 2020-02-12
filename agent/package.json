@@ -1,0 +1,14 @@
+{
+  "name": "director-agent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "electron": "^8.0.0",
+    "jquery": "^3.4.1"
+  },
+  "scripts": {
+    "start": "electron index.js"
+  }
+}
