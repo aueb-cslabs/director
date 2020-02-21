@@ -12,7 +12,7 @@ class User(db.Model):
 
     username = db.Column(db.String(128), unique=True, nullable=False)
     full_name = db.Column(db.String())
-    mail = db.Column(db.String())
+    mail = db.Column(db.String(128))
     phone = db.Column(db.String())
     affiliation = db.Column(db.String())
 

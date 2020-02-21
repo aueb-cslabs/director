@@ -8,6 +8,7 @@ db = SQLAlchemy()
 r = FlaskRedis()
 auth = Authenticator()
 
+
 def create_app(test_config=None):
     app = Flask(__name__)
     if test_config is None:
