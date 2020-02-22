@@ -1,12 +1,20 @@
 language: python
 python:
   - 3.7
+services:
+  - docker
 before_install:
   - python --version
   - pip install -U pip
-  - pip install -U pytest
 install:
-  - pip install -r requirements.txt
-script: pytest -s --cov=.
+  - pip install -U pytest
+  - pip install -U codecov
+  - pip install -U psycopg2
+  - pip install -Ur requirements.txt
+  - docker-compose pull
+before_script:
+  - docker-compose up -d
+script:
+  - pytest -s --cov=.
 after_success:
   - codecov
