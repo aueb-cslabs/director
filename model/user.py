@@ -8,7 +8,7 @@ class UserType(enum.Enum):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     foreign_id = db.Column(db.String(256), unique=True, nullable=True)
-    user_type = db.Column(db.Enum(UserType), default=0)
+    user_type = db.Column(db.Enum(UserType), default='local')
 
     username = db.Column(db.String(128), unique=True, nullable=False)
     full_name = db.Column(db.String())
