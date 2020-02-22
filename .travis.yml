@@ -7,4 +7,6 @@ before_install:
   - pip install -U pytest
 install:
   - pip install -r requirements.txt
-script: pytest
+script: pytest -s --cov=.
+after_success:
+  - codecov

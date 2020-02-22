@@ -8,7 +8,10 @@ class LocalAdapter(Adapter):
         return User.query.filter_by(username=username).first()
 
     def search_user(self, query):
-        return []
+        return User.query.filter(
+            (User.username.like("%{}%".format(query))) |
+            (User.full_name.like("%{}%".format(query)))
+        ).all()
 
     def authenticate(self, user, password):
         return False

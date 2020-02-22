@@ -14,5 +14,5 @@ def test_get_user(client):
 
 def test_get_user_failing_test(client):
     rv = client.get('/api/public/user/p3150133')
-    assert b'{}\n' == rv.data
+    assert rv.status_code == 404
 

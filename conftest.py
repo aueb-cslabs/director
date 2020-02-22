@@ -4,6 +4,10 @@ import pytest
 
 from app import create_app, db
 
+import logging
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
 @pytest.fixture(scope='session', autouse=True)
 def app_primitive():
     db_fd, db_file = tempfile.mkstemp()
