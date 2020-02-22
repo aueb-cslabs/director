@@ -4,6 +4,7 @@ from app import db
 from model import User
 from authentication.local_adapter import LocalAdapter
 
+
 @pytest.fixture
 def local_adapter(app):
     db.session.add(User(username='p3150133', full_name='Pagkalos Spyridon'))

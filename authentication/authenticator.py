@@ -3,6 +3,7 @@ class Authenticator():
     def __init__(self):
         self.adapters = []
 
+
     def init_app(self, app):
         for provider in app.config.get('AUTH_PROVIDERS', ['local']):
             if provider == 'local':
@@ -11,6 +12,7 @@ class Authenticator():
             elif provider == 'ldap':
                 from .ldap_adapter import LdapAdapter
                 self.adapters.append(LdapAdapter())
+
 
     def get_user(self, username):
         """
@@ -21,6 +23,7 @@ class Authenticator():
             if user is not None:
                 return user
         return None
+
 
     def authenticate_user(self, user, password):
         """
@@ -38,6 +41,7 @@ class Authenticator():
                 return user
         return None
 
+
     def authenticate(self, username, password):
         """
         Authenticate only by using a username and a password.
@@ -48,3 +52,4 @@ class Authenticator():
             return None
 
         return self.authenticate_user(user, password)
+
