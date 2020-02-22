@@ -25,6 +25,16 @@ class Authenticator():
         return None
 
 
+    def search_user(self, query):
+        """
+        Searches users from all of the available backends.
+        """
+        users = []
+        for adapter in self.adapters:
+            users = users + adapter.search_user(query)
+        return users
+
+
     def authenticate_user(self, user, password):
         """
         Authenticate by using all available backends.

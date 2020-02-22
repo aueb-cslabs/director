@@ -26,3 +26,9 @@ def test_search_user(ldap_adapter):
     assert len(ldap_adapter.search_user('admin')) == 1
     assert len(ldap_adapter.search_user('user')) == 0
 
+def test_authenticate(ldap_adapter):
+    user = ldap_adapter.get_user('admin')
+
+    assert ldap_adapter.authenticate(user, 'director') is True
+    assert ldap_adapter.authenticate(user, 'password') is False
+
