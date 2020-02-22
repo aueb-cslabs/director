@@ -1,6 +1,8 @@
 astroid==2.3.3
 attrs==19.3.0
+bcrypt==3.1.7
 certifi==2019.11.28
+cffi==1.14.0
 chardet==3.0.4
 Click==7.0
 codecov==2.0.15
@@ -25,6 +27,7 @@ psycopg2==2.8.4
 py==1.8.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
+pycparser==2.19
 pylint==2.4.4
 pylint-flask==0.6
 pylint-plugin-utils==0.6
