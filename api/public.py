@@ -1,5 +1,5 @@
 from flask import Blueprint
-from model import User
+from director.model import User
 
 PublicAPI = Blueprint('public_api', __name__, url_prefix='/api/public')
 

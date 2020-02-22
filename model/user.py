@@ -1,8 +1,9 @@
-from app import db
 import enum
 
 from marshmallow import Schema, fields
 from marshmallow_enum import EnumField
+
+from director import db
 
 class UserType(enum.Enum):
     local = 0

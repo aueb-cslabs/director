@@ -1,7 +1,7 @@
 from flask import current_app as app
 from ldap import initialize, SCOPE_SUBTREE, INVALID_CREDENTIALS
-from model import User, UserType
 
+from director.model import User, UserType
 from .adapter import Adapter
 
 

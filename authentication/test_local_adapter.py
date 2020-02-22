@@ -1,8 +1,8 @@
 import pytest
 
-from app import db
-from model import User
-from authentication.local_adapter import LocalAdapter
+from director import db
+from director.model import User
+from director.authentication.local_adapter import LocalAdapter
 
 
 @pytest.fixture

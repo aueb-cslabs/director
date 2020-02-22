@@ -2,8 +2,8 @@ import pytest
 import bcrypt
 import base64
 
-from app import db, auth
-from model import User
+from director import db, auth
+from director.model import User
 
 @pytest.fixture
 def authenticator(app):

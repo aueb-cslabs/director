@@ -2,8 +2,8 @@ import bcrypt
 import base64
 
 from flask import current_app as app
-from model import User
 
+from director.model import User
 from .adapter import Adapter
 
 class LocalAdapter(Adapter):

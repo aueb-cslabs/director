@@ -2,7 +2,7 @@ import enum
 
 from sqlalchemy import ForeignKey
 
-from app import db
+from director import db
 
 
 class Status(enum.Enum):

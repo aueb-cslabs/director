@@ -2,8 +2,8 @@ from datetime import datetime
 
 from sqlalchemy import ForeignKey
 
-from app import db
-from model import user, terminal, lab
+from director import db
+from director.model import user, terminal, lab
 
 
 class Session(db.Model):

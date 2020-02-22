@@ -2,19 +2,31 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_redis import FlaskRedis
 
-from authentication import Authenticator
+from director.authentication import Authenticator
 
 db = SQLAlchemy()
 r = FlaskRedis()
 auth = Authenticator()
 
+print("""
+Director, Copyright (C) 2020 - Athens University of Economics and Business, CSLab
+This program comes with ABSOLUTELY NO WARRANTY; for details open 'LICENSE.md'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; open 'LICENSE.md' for details.
+""")
 
 def create_app(test_config=None):
     app = Flask(__name__)
     if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
+        app.config.from_pyfile('config.py', silent=False)
     else:
         app.config.from_mapping(test_config)
+
+    if app.config['ENV'] == 'development':
+        import logging
+        logging.basicConfig()
+        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
 
     # Initialize the database and Redis
     db.init_app(app)
@@ -22,14 +34,14 @@ def create_app(test_config=None):
 
     # Facilitate all the necessary migrations
     with app.app_context():
-        import model
+        import director.model
         db.create_all()
 
         # Initialize the necessary modules
         auth.init_app(app)
 
         # Register foreign modules
-        from api import PublicAPI, PrivateAPI
+        from director.api import PublicAPI, PrivateAPI
         app.register_blueprint(PublicAPI)
         app.register_blueprint(PrivateAPI)
 
@@ -41,3 +53,4 @@ def create_app(test_config=None):
         return 'alive'
 
     return app
+

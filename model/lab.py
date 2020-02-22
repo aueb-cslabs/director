@@ -1,4 +1,4 @@
-from app import db
+from director import db
 
 
 class Lab(db.Model):

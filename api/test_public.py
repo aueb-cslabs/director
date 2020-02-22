@@ -1,8 +1,6 @@
-from unittest.mock import MagicMock
-from authentication.local_adapter import LocalAdapter
-
-from app import db
-from model import User
+from director import db
+from director.model import User
+from director.authentication.local_adapter import LocalAdapter
 
 def test_get_user(client):
     db.session.add(User(username='p3150133', full_name='Spyridon Pagkalos'))

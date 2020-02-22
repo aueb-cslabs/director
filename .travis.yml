@@ -14,6 +14,6 @@ install:
   - docker-compose pull
 script:
   - docker-compose up -d
-  - pytest -s --cov=.
+  - make .ci-test
 after_success:
   - codecov

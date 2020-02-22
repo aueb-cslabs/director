@@ -2,11 +2,7 @@ import os
 import tempfile
 import pytest
 
-from app import create_app, db
-
-import logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+from director import create_app, db
 
 # These unit tests only work with the include docker-compose.
 

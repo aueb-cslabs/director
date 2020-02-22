@@ -1,8 +1,8 @@
 import pytest
 
-from app import db
-from model import User
-from authentication.ldap_adapter import LdapAdapter
+from director import db
+from director.model import User
+from director.authentication.ldap_adapter import LdapAdapter
 
 
 @pytest.fixture
