@@ -6,4 +6,7 @@ PublicAPI = Blueprint('public_api', __name__, url_prefix='/api/public')
 
 @PublicAPI.route('/user/<username>')
 def get_user(username):
-    return auth.get_user(username)
+    user = auth.get_user(username)
+    if user is None:
+        return ({}, 404)
+    return user.serialize()

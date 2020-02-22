@@ -1,9 +1,21 @@
 from app import db
 import enum
 
+from marshmallow import Schema, fields
+from marshmallow_enum import EnumField
+
 class UserType(enum.Enum):
     local = 0
     ldap = 1
+
+class UserSchema(Schema):
+    id = fields.Int(dump_only=True)
+    user_type = EnumField(UserType)
+    username = fields.Str()
+    full_name = fields.Str()
+    mail = fields.Str()
+    phone = fields.Str()
+    affiliation = fields.Str()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,6 +29,9 @@ class User(db.Model):
     affiliation = db.Column(db.String())
 
     cached_password = db.Column(db.String())
+
+    def serialize(self):
+        return UserSchema().dump(self)
 
     def __repr__(self):
         return '<User %r %r %r %r %r %r %r>' % (self.id,

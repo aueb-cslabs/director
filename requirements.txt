@@ -10,6 +10,8 @@ itsdangerous==1.1.0
 Jinja2==2.11.1
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
+marshmallow==3.5.0
+marshmallow-enum==1.5.1
 mccabe==0.6.1
 more-itertools==8.2.0
 packaging==20.1
