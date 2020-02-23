@@ -7,3 +7,4 @@ AUTH_PROVIDERS = ['local']
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///.developmentdb.sqlite'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_ECHO = True

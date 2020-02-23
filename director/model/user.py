@@ -31,6 +31,15 @@ class User(db.Model):
 
     cached_password = db.Column(db.String())
 
+    def update_from_remote(self, remote_user):
+        if remote_user.user_type == UserType.local:
+            return
+
+        self.full_name = remote_user.full_name
+        self.mail = remote_user.mail
+        self.phone = remote_user.phone
+        self.affiliation = remote_user.affiliation
+
     def serialize(self):
         return UserSchema().dump(self)
 

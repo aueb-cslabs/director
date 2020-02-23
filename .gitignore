@@ -1,9 +1,11 @@
 __pycache__
-/config.py
-/*.sqlite
-/venv
+.pytest_cache
+config.py
+*.sqlite*
 
-/*.egg-info
+/.coverage
+/venv*
+
 /build
 /dist
-.coverage
+/*.egg-info

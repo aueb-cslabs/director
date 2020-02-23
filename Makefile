@@ -1,7 +1,8 @@
 .EXPORT_ALL_VARIABLES:
 
 export FLASK_ENV = development
-export FLASK_APP = .
+export FLASK_APP = director
+export DIRECTOR_SETTINGS = $(abspath config.py)
 
 .ci-test:
 	pytest -s --cov=.

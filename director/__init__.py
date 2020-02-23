@@ -8,6 +8,10 @@ db = SQLAlchemy()
 r = FlaskRedis()
 auth = Authenticator()
 
+default_settings = {
+    'AUTH_PROVIDERS': ['local', 'ldap']
+}
+
 print("""
 Director, Copyright (C) 2020 - Athens University of Economics and Business, CSLab
 This program comes with ABSOLUTELY NO WARRANTY; for details open 'LICENSE.md'.
@@ -18,15 +22,10 @@ under certain conditions; open 'LICENSE.md' for details.
 def create_app(test_config=None):
     app = Flask(__name__)
     if test_config is None:
-        app.config.from_pyfile('config.py', silent=False)
+        app.config.from_object('director.default_settings')
+        app.config.from_envvar('DIRECTOR_SETTINGS')
     else:
         app.config.from_mapping(test_config)
-
-    if app.config['ENV'] == 'development':
-        import logging
-        logging.basicConfig()
-        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-
 
     # Initialize the database and Redis
     db.init_app(app)
