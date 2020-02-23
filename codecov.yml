@@ -1,0 +1,17 @@
+codecov:
+  require_ci_to_pass: yes
+  strict_yaml_branch: master
+
+comment: false
+
+coverage:
+  range: 70..100
+  round: down
+  precision: 1
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 5%
+        informational: true
+        only_pulls: false
