@@ -2,14 +2,24 @@ import enum
 
 from sqlalchemy import ForeignKey
 
-from director import db
+from marshmallow import Schema, fields
+from marshmallow_enum import EnumField
 
+from director import db
 
 class Status(enum.Enum):
     down = 0
     locked = 1
     up = 2
     logged_in = 3
+
+class TerminalSchema(Schema):
+    id = fields.Int(dump_only=True)
+    host_name = fields.Str()
+    ip = fields.Str()
+    status = EnumField(Status)
+    room = fields.Str()
+    lab_id = fields.Int(dump_only=True)
 
 
 class Terminal(db.Model):
@@ -20,6 +30,13 @@ class Terminal(db.Model):
     room = db.Column(db.String(256), nullable=True)
     lab_id = db.Column(db.Integer, ForeignKey('lab.id'))
     sessions = db.relationship("Session", backref="terminal")
+
+    def serialize(self):
+        return TerminalSchema().dump(self)
+
+    def update_item(self, remote):
+        # TODO: add what will patch do for one variable
+        return 204
 
     def __repr__(self):
         return '<Terminal %r %r %r %r %r %r>' % (self.id,
