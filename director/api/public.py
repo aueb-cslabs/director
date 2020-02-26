@@ -1,5 +1,6 @@
 from flask import Blueprint, request, Response, jsonify
 from director.model import User
+from functools import wraps
 
 PublicAPI = Blueprint('public_api', __name__, url_prefix='/api/public')
 
@@ -30,40 +31,74 @@ def get_terminals(lab, terminal = None):
 
     return terminal_result.serialize()
 
+# Checks if the client sends a (not-empty-also) json
+def empty_json_body(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            # Check if empty
+            if len(request.get_json()) == 0:
+                return jsonify({'message': 'Provide some values.'}), 400
+        except:
+            # There was no json in request data
+            return jsonify({"message": "Provide a json body."}), 400
+        return f(*args,**kwargs)
+    return decorated
 
 @PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>', methods=["PATCH"])
+@empty_json_body
 def patch_terminal(lab, terminal):
-
-    # if there is only one element to update then continue
-    if len(request.json) == 1:
         
-        terminal_result = terminal_model.query.filter_by(lab_id=lab,id=terminal).first_or_404()
+    terminal_result = terminal_model.query.filter_by(lab_id=lab,id=terminal).first_or_404()
 
-        # TODO: Change according to logic of this route
-        # item = request.json.item
+    valid_options = ['host_name', 'ip', 'status', 'room', 'lab_id']
+    changes = {}
+    # Keep only the values we need
+    for key, value in dict(request.json).items():
+        if key in valid_options:
+            changes[key] = value
+    
+    statusCode = terminal_result.update_items(changes)
+    
+    resp = Response(status=statusCode)           
+    return resp
 
-        statusCode = terminal_result.update_item(None)
+@PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>/<command>', methods=["PATCH"])
+def patch_terminal_c(lab, terminal, command):
+    
+    valid_commands = ['restart','shutdown','hibernate','log-out']
 
-        resp = Response(status=statusCode)           
+    if command not in valid_commands:
+        error = {
+            "error": "Bad request"
+        }
+        
+        resp = jsonify(error)
+        resp.status_code = 406
+
         return resp
 
-    # else return error
-    error = {
-        "error": "Bad request"
-    }
-    
-    resp = jsonify(error)
-    resp.status_code = 400
+    # TODO
+    # communicate with user-agent
+
+    resp = Response(status=501)
 
     return resp
 
-# TODO
-# @PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>/', methods=["PATCH"])
-# def patch_terminal_c(lab, terminal):
-#     command = request.json['command']
-#     return {}
+@PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>', methods=["PUT"])
+@empty_json_body
+def update_terminal(lab, terminal):
 
-# @PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>', methods=["PUT"])
-# def update_terminal(lab, terminal):
-#     return {}
+    terminal_result = terminal_model.query.filter_by(lab_id=lab,id=terminal).first_or_404()
+
+    valid_options = ['host_name', 'ip', 'status', 'room', 'lab_id']
+    changes = {}
+    # Keep only the values we need
+    for key, value in dict(request.json).items():
+        if key in valid_options:
+            changes[key] = value
     
+    statusCode = terminal_result.update_items(changes)
+    
+    resp = Response(status=statusCode)           
+    return resp

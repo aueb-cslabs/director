@@ -34,9 +34,15 @@ class Terminal(db.Model):
     def serialize(self):
         return TerminalSchema().dump(self)
 
-    def update_item(self, remote):
-        # TODO: add what will patch do for one variable
-        return 204
+    def update_items(self, changes):
+        madeChanges = 204
+        for key, value in changes.items():
+            madeChanges = 200
+            print("Key is ", key,"\tValue: ",value)
+            setattr(self, key, value)
+            db.session.commit()
+
+        return madeChanges
 
     def __repr__(self):
         return '<Terminal %r %r %r %r %r %r>' % (self.id,
