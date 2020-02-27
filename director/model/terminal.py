@@ -34,15 +34,29 @@ class Terminal(db.Model):
     def serialize(self):
         return TerminalSchema().dump(self)
 
-    def update_items(self, changes):
+    def update_all(self, changes):
+        try:
+            self.host_name = changes["host_name"]
+            self.ip = changes["ip"]
+            self.status = Status.down if changes["status"] == None else changes["status"]
+            self.room = changes["room"]
+            self.lab_id = changes["lab_id"]
+            db.session.commit()
+        except:
+            return {"error", "Possible duplicate host name or IP."}, 400
+        
+        return {"message": "Update successful"}
+
+    def update(self, changes):
         madeChanges = 204
         for key, value in changes.items():
             madeChanges = 200
-            print("Key is ", key,"\tValue: ",value)
             setattr(self, key, value)
+        try:
             db.session.commit()
-
-        return madeChanges
+        except:
+            return {"error", "Possible duplicate host name or IP."}, 400
+        return {"Success": "Updated."}, madeChanges
 
     def __repr__(self):
         return '<Terminal %r %r %r %r %r %r>' % (self.id,

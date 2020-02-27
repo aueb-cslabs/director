@@ -1,4 +1,4 @@
-from flask import Blueprint, request, Response, jsonify
+from flask import Blueprint, request
 from director.model import User
 from functools import wraps
 
@@ -24,7 +24,7 @@ def get_terminals(lab, terminal = None):
             jsonArray['terminals'].append(_.serialize())
 
         return jsonArray
-    #end if
+    #end if: GET: /terminals
     
     # GET: /terminal/<terminal>
     terminal_result = terminal_model.query.filter_by(lab_id=lab,id=terminal).first_or_404()
@@ -38,67 +38,61 @@ def empty_json_body(f):
         try:
             # Check if empty
             if len(request.get_json()) == 0:
-                return jsonify({'message': 'Provide some values.'}), 400
+                return {'message': 'Provide some values.'}, 400
         except:
             # There was no json in request data
-            return jsonify({"message": "Provide a json body."}), 400
+            return {"message": "Provide a json body."}, 400
         return f(*args,**kwargs)
     return decorated
 
-@PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>', methods=["PATCH"])
+@PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>', methods=["PATCH", "PUT"])
 @empty_json_body
 def patch_terminal(lab, terminal):
         
     terminal_result = terminal_model.query.filter_by(lab_id=lab,id=terminal).first_or_404()
-
+    
     valid_options = ['host_name', 'ip', 'status', 'room', 'lab_id']
+        
     changes = {}
-    # Keep only the values we need
     for key, value in dict(request.json).items():
         if key in valid_options:
+            value = None if value == "" else value
             changes[key] = value
+
+    # If not any value is assigned, assign the uri's lab otherwise the terminal
+    # will be lost forever from the client (only the database will be able to see it)
+    if changes.get("lab_id") == None:
+        changes["lab_id"] = lab
     
-    statusCode = terminal_result.update_items(changes)
+    # possible TODO: check status value (is it 0 1 2 3) or (down, locked, up, logged_in)
+
+    # PATCH: Update only the parameters we are given
+    if request.method == 'PATCH':
+        if changes['ip'] == None:   # IP is not nullable
+            return {"error": "Terminal IP can't be null or empty"}, 400
+
+        return terminal_result.update(changes)
+    # end if:PATCH
+
+    # PUT: Update all parameters
+    for option in valid_options:
+        if option not in changes.keys():
+            changes[option] = None
     
-    resp = Response(status=statusCode)           
-    return resp
+    if changes['ip'] == None:   # IP is not nullable
+        return {"error": "Terminal IP can't be null or empty"}, 400
+
+    return terminal_result.update_all(changes)
 
 @PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>/<command>', methods=["PATCH"])
 def patch_terminal_c(lab, terminal, command):
     
     valid_commands = ['restart','shutdown','hibernate','log-out']
-
+    
     if command not in valid_commands:
-        error = {
-            "error": "Bad request"
-        }
-        
-        resp = jsonify(error)
-        resp.status_code = 406
-
-        return resp
+        return {"error": "Invalid command"}, 406
 
     # TODO
     # communicate with user-agent
 
-    resp = Response(status=501)
-
-    return resp
-
-@PublicAPI.route('/lab/<int:lab>/terminal/<int:terminal>', methods=["PUT"])
-@empty_json_body
-def update_terminal(lab, terminal):
-
-    terminal_result = terminal_model.query.filter_by(lab_id=lab,id=terminal).first_or_404()
-
-    valid_options = ['host_name', 'ip', 'status', 'room', 'lab_id']
-    changes = {}
-    # Keep only the values we need
-    for key, value in dict(request.json).items():
-        if key in valid_options:
-            changes[key] = value
-    
-    statusCode = terminal_result.update_items(changes)
-    
-    resp = Response(status=statusCode)           
-    return resp
+    return {"message": "Not implemented"}, 501
