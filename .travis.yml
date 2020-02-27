@@ -7,13 +7,13 @@ before_install:
   - python --version
   - pip install -U pip
 install:
+  - docker-compose -v pull
+  - docker-compose up -v -d
   - pip install -U pytest
   - pip install -U codecov
   - pip install -U psycopg2
   - pip install -Ur requirements.txt
-  - docker-compose pull
 script:
-  - docker-compose up -d
   - make .ci-test
 after_success:
   - codecov
