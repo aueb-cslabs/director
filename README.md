@@ -22,7 +22,7 @@ them up.
 To start the Flask application, while inside the project's directory, run:
 
 ```bash
-export DIRECTOR_SETTINGS="<path to your config.py file>
+export DIRECTOR_SETTINGS="<path to your config.py file>"
 FLASK_ENV=development FLASK_APP=director flask run
 ```
 
