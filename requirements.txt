@@ -45,3 +45,4 @@ wcwidth==0.1.8
 Werkzeug==0.16.1
 wrapt==1.11.2
 zipp==3.0.0
+pyjwt==1.7.1
