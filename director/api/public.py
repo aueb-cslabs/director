@@ -22,7 +22,7 @@ def login():
         return jsonify({'message': ' password must not be empty'}), 401
     authenticator = Authenticator()
     user = authenticator.authenticate(request.form['username'], request.form['password'])                                    
-    if user != None:
+    if user == None:
         #if user do not exist
         return  Response(status=401)
     return generate_jwt(request.form['username']), 200
